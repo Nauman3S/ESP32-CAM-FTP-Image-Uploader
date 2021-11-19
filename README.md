@@ -97,7 +97,8 @@ Follow the pinout diagram given below to connect different components to your ES
 2.  Put your FTP server credentials on line number 20, 21 and 22.
 3.  Open Firmware.ino file and put your WiFi credentials on line number 34 and 34.
 4.  Upload the code to your ESP32.
-5.  When PIR sensor detect a motion, it will take the image and will upload it to the FTP server with timestamp.
+5.  You can set picture quality online number 423 of Firmware.ino (from 0-100)
+6.  When PIR sensor detect a motion, it will take the image and will upload it to the FTP server with timestamp.
 
 ## List of Components <a name = "list"></a>
 

@@ -168,7 +168,7 @@ bool setupDisplay()
     oled.setFont(ArialMT_Plain_16);
     oled.setTextAlignment(TEXT_ALIGN_CENTER);
     // delay(50);
-    oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2 - 10, "LilyGo CAM");
+    oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2 - 10, "FTP CAM");
     oled.display();
     ui.setTargetFPS(30);
     ui.setIndicatorPosition(BOTTOM);
@@ -254,7 +254,12 @@ bool setupSDCard()
     //if available
     return true;
 }
-
+int pictureQuality = 60;
+int setPictureQualityValue(int qualityPercent)
+{
+    int v = map(qualityPercent, 0, 100, 0, 63);
+    return v;
+}
 bool setupCamera()
 {
     camera_config_t config;
@@ -283,8 +288,8 @@ bool setupCamera()
     //init with high specs to pre-allocate larger buffers
     if (psramFound())
     {
-        config.frame_size = FRAMESIZE_UXGA;
-        config.jpeg_quality = 10;
+        config.frame_size = FRAMESIZE_UXGA; // QVGA|CIF|VGA|SVGA|XGA|SXGA|UXGA  */
+        config.jpeg_quality = pictureQuality;           //0-63
         config.fb_count = 2;
     }
     else
@@ -293,14 +298,6 @@ bool setupCamera()
         config.jpeg_quality = 12;
         config.fb_count = 1;
     }
-#endif
-
-#if defined(ESPRESSIF_ESP_EYE) || defined(T_Camera_V162_VERSION) || defined(T_Camera_MINI_VERSION)
-    /* IO13, IO14 is designed for JTAG by default,
-     * to use it as generalized input,
-     * firstly declair it as pullup input */
-    pinMode(13, INPUT_PULLUP);
-    pinMode(14, INPUT_PULLUP);
 #endif
 
     // camera init
@@ -332,12 +329,7 @@ bool setupCamera()
 void setupNetwork()
 {
     macAddress = "LilyGo-CAM-";
-#ifdef SOFTAP_MODE
-    WiFi.mode(WIFI_AP);
-    macAddress += WiFi.softAPmacAddress().substring(0, 5);
-    WiFi.softAP(macAddress.c_str());
-    ipAddress = WiFi.softAPIP().toString();
-#else
+
     WiFi.begin(WIFI_SSID, WIFI_PASSWD);
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -348,13 +340,6 @@ void setupNetwork()
     Serial.println("WiFi connected");
     ipAddress = WiFi.localIP().toString();
     macAddress += WiFi.macAddress().substring(0, 5);
-#endif
-#if defined(ENABLE_TFT)
-#if defined(T_Camera_PLUS_VERSION)
-    tft.drawString("ipAddress:", tft.width() / 2, tft.height() / 2 + 50);
-    tft.drawString(ipAddress, tft.width() / 2, tft.height() / 2 + 72);
-#endif
-#endif
 }
 
 void setupButton()
@@ -434,6 +419,8 @@ void setup()
 {
 
     Serial.begin(115200);
+    
+    setPictureQualityValue(80);//0-100%
 
 #if defined(I2C_SDA) && defined(I2C_SCL)
     Wire.begin(I2C_SDA, I2C_SCL);
@@ -469,7 +456,7 @@ void setup()
 
     setupNetwork();
 
-    startCameraServer();
+    // startCameraServer();
 
     Serial.print("Camera Ready! Use 'http://");
     Serial.print(ipAddress);
