@@ -124,17 +124,17 @@ bool setupDisplay()
             display->setTextAlignment(TEXT_ALIGN_CENTER);
             display->setFont(ArialMT_Plain_10);
 #if (SSD130_MODLE_TYPE)
-            display->drawString(64 + x, 0 + y, macAddress);
-            display->drawString(64 + x, 10 + y, ipAddress);
+        // display->drawString(64 + x, 0 + y, macAddress);
+        // display->drawString(64 + x, 10 + y, ipAddress);
 #else
-            display->drawString(64 + x, 9 + y, macAddress);
-            display->drawString(64 + x, 25 + y, ipAddress);
+        // display->drawString(64 + x, 9 + y, macAddress);
+        // display->drawString(64 + x, 25 + y, ipAddress);
 #endif
 
 #if defined(AS312_PIN)
             if (digitalRead(AS312_PIN))
             {
-                display->drawString(64 + x, 40 + y, "AS312 Trigger");
+                // display->drawString(64 + x, 40 + y, "AS312 Trigger");
             }
 #endif
         },
@@ -146,15 +146,15 @@ bool setupDisplay()
             display->setFont(ArialMT_Plain_10);
 
 #if (SSD130_MODLE_TYPE)
-            // if (oled.getHeight() == 32) {
-            display->drawString(64 + x, 0 + y, "Camera Ready! Use");
-            display->drawString(64 + x, 10 + y, "http://" + ipAddress);
-            display->drawString(64 + x, 16 + y, "to connect");
+        // if (oled.getHeight() == 32) {
+        // display->drawString(64 + x, 0 + y, "Camera Ready! Use");
+        // display->drawString(64 + x, 10 + y, "http://" + ipAddress);
+        // display->drawString(64 + x, 16 + y, "to connect");
         // } else {
 #else
-            display->drawString(64 + x, 5 + y, "Camera Ready! Use");
-            display->drawString(64 + x, 25 + y, "http://" + ipAddress);
-            display->drawString(64 + x, 45 + y, "to connect");
+        // display->drawString(64 + x, 5 + y, "Camera Ready! Use");
+        // display->drawString(64 + x, 25 + y, "http://" + ipAddress);
+        // display->drawString(64 + x, 45 + y, "to connect");
         // }
 #endif /*SSD130_MODLE_TYPE*/
 
@@ -168,7 +168,7 @@ bool setupDisplay()
     oled.setFont(ArialMT_Plain_16);
     oled.setTextAlignment(TEXT_ALIGN_CENTER);
     // delay(50);
-    oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2 - 10, "FTP CAM");
+    oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2 - 10, "PHOTOTRAP");
     oled.display();
     ui.setTargetFPS(30);
     ui.setIndicatorPosition(BOTTOM);
@@ -257,7 +257,7 @@ bool setupSDCard()
 int pictureQuality = 60;
 int setPictureQualityValue(int qualityPercent)
 {
-    int v = map(qualityPercent, 0, 100, 0, 63);
+    int v = map(qualityPercent, 0, 100, 63, 10);
     return v;
 }
 bool setupCamera()
@@ -288,8 +288,8 @@ bool setupCamera()
     //init with high specs to pre-allocate larger buffers
     if (psramFound())
     {
-        config.frame_size = FRAMESIZE_UXGA; // QVGA|CIF|VGA|SVGA|XGA|SXGA|UXGA  */
-        config.jpeg_quality = pictureQuality;           //0-63
+        config.frame_size = FRAMESIZE_UXGA;   // QVGA|CIF|VGA|SVGA|XGA|SXGA|UXGA  */
+        config.jpeg_quality = pictureQuality; //0-63
         config.fb_count = 2;
     }
     else
@@ -379,17 +379,18 @@ void setupButton()
                                  oled.clear();
 #if defined(AS312_PIN) && defined(PIR_SUPPORT_WAKEUP)
                                  oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2, "Set to wake up from PIR");
+                                 ?
 #elif defined(BUTTON_1)
-                                 oled.drawString(oled.getWidth() / 2 - 5, oled.getHeight() / 2 - 20, "Deepsleep");
-                                 oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2 - 10, "Set to be awakened by");
-                                 oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2, "a key press");
+        //  oled.drawString(oled.getWidth() / 2 - 5, oled.getHeight() / 2 - 20, "Deepsleep");
+        //  oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2 - 10, "Set to be awakened by");
+        //  oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2, "a key press");
 #else
-                                 oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2, "Set to wake up by timer");
+        //  oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2, "Set to wake up by timer");
 #endif
-                                 oled.display();
-                                 delay(3000);
-                                 oled.clear();
-                                 oled.displayOff();
+        //  oled.display();
+        //  delay(3000);
+        //  oled.clear();
+        //  oled.displayOff();
 #else
                                  delay(2000);
 #endif /*SSD130_MODLE_TYPE*/
@@ -419,8 +420,8 @@ void setup()
 {
 
     Serial.begin(115200);
-    
-    setPictureQualityValue(80);//0-100%
+
+    setPictureQualityValue(80); //0-100%
 
 #if defined(I2C_SDA) && defined(I2C_SCL)
     Wire.begin(I2C_SDA, I2C_SCL);
@@ -463,6 +464,8 @@ void setup()
     Serial.println("' to connect");
     timeClient.begin();
     timeClient.setTimeOffset(32400);
+    oled.drawString(oled.getWidth() / 2, oled.getHeight() / 2 - 10, "PHOTOTRAP");
+    oled.display();
 
     {
         while (!timeClient.update())
